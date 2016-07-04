@@ -13,6 +13,6 @@
 @interface Model : NSObject
 @property(copy, nonatomic) Notes *notes;
 + (Model *)sharedModel;
-//-(void)saveNote:(Note *)note;
-//-(Note *)loadNote;
+-(void)saveNotes;
+-(NSArray *)loadNotes;
 @end

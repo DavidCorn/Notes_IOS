@@ -36,10 +36,15 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    NSMutableArray * tempArray = [[Model sharedModel].notes.notes mutableCopy];
     if (self.noteToAdd && ![self.noteToAdd isBlank]) {
         [[Model sharedModel].notes addNote:self.noteToAdd];
     }
     self.noteToAdd = nil;
+    
+    if (![tempArray isEqualToArray:[Model sharedModel].notes.notes]) {
+        [[Model sharedModel] saveNotes];
+    }
     
     [super viewWillAppear:animated];
     [self.tableView reloadData];
@@ -103,7 +108,12 @@
  - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
      if (editingStyle == UITableViewCellEditingStyleDelete) {
          // Delete the row from the data source
+         NSMutableArray * tempArray = [[Model sharedModel].notes.notes mutableCopy];
          [[Model sharedModel].notes deleteNoteAtIndex:indexPath.row];
+         if (![tempArray isEqualToArray:[Model sharedModel].notes.notes]) {
+             [[Model sharedModel] saveNotes];
+         }
+         
          [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -114,7 +124,11 @@
 
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    NSMutableArray * tempArray = [[Model sharedModel].notes.notes mutableCopy];
     [[Model sharedModel].notes moveFromIndex:fromIndexPath.row toIndex:toIndexPath.row];
+    if (![tempArray isEqualToArray:[Model sharedModel].notes.notes]) {
+        [[Model sharedModel] saveNotes];
+    }
 }
 
 

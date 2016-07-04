@@ -22,14 +22,27 @@
 }
 -(Notes *)notes {
     if (!_notes) {
-        _notes = [[Notes alloc] initWithNotes:@[
-                                                [[Note alloc] initWithTitle:@"First note" detail:@"Here's some detail"],
-                                                [[Note alloc] initWithTitle:@"Second note" detail:@"Here's some more detail"]
-                                                ]
-                  ];
+        _notes = [[Notes alloc] initWithNotes:[self loadNotes]];
     }
     return _notes;
 }
+-(void)saveNotes {
+    [NSKeyedArchiver archiveRootObject:self.notes.notes toFile:[self filePath]];
+    NSLog(@"Saving");
+}
+-(NSString *)filePath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    return ([documentsDirectoryPath stringByAppendingPathComponent:@"noteData"]);
+}
+-(NSArray *)loadNotes {
+    NSArray *notesArray = [NSKeyedUnarchiver unarchiveObjectWithFile:[self filePath]];
+    if (!notesArray) {
+        notesArray = @[];
+    }
+    return(notesArray);
+}
+
 //-(void)saveNote:(Note *)note {
 //    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 //    [defaults setObject:note.title forKey:@"title"];
